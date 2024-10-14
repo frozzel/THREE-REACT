@@ -53,15 +53,7 @@ li {
   text-decoration: none;
 }
 
-Link, Link:hover, Link:visited {
-  color: inherit;
-  text-decoration: none;
- }
-Link, Link:hover, Link:active {
-  color: greenyellow;
-  text-decoration: none;
 
-}
 #info {
 position: absolute;
 width: 100%;
@@ -89,12 +81,13 @@ overscroll-behavior: none;
 }
 
 a {
-color: #ff0;
+color: greenyellow ;
 text-decoration: none;
 }
 
 a:hover {
 text-decoration: underline;
+color: whitesmoke;
 }
 
 button {

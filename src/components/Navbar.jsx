@@ -7,10 +7,10 @@ export default function navbar() {
         <h3>three.js tutorial</h3>
     </div>
     <ul>
-        <li> <Link to="/">Home</Link></li>
-        <li><Link to="/cube" >Cube</Link></li>
-        <li><Link to="/lines" >Lines</Link></li>
-        <li><Link to="/text" >Text</Link></li>
+        <li> <Link to="/" style={{ textDecoration: 'none' }}>Home</Link></li>
+        <li><Link to="/cube" style={{ textDecoration: 'none' }}>Cube</Link></li>
+        <li><Link to="/lines" style={{ textDecoration: 'none' }}>Lines</Link></li>
+        <li><Link to="/text" style={{ textDecoration: 'none' }}>Text</Link></li>
     </ul>
    
 </nav>

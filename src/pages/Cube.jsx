@@ -15,19 +15,27 @@ export default function Cube() {
       75, 
       window.innerWidth / window.innerHeight, 
       0.1, 
-      1000
+      1200
     );  
   
     const renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor("#1F1F1F");
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const edges = new THREE.EdgesGeometry( geometry ); 
+    const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { 
+      color: 0xffffff, 
+      linewidth: 9,
+      linecap: 'round', //ignored by WebGLRenderer
+	    linejoin:  'round' //ignored by WebGLRenderer
+      } ) );
+    const material = new THREE.MeshBasicMaterial({ color: 0x0094EE });
     const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    scene.add(cube, line);
 
-    camera.position.z = 5;
+    camera.position.z = .5;
 
     const onResize = () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -46,7 +54,9 @@ export default function Cube() {
     // Animate function
     const animate = () => {
       cube.rotation.x += 0.01;
+      line.rotation.x += 0.01;
       cube.rotation.y += 0.01;
+      line.rotation.y += 0.01;
       controls.update();
       
       renderer.render(scene, camera);
