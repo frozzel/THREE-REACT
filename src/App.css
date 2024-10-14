@@ -1,0 +1,171 @@
+body {
+  margin: 0px;
+  height: 100vh;
+}
+canvas {
+  display: block;
+}
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+#scene-container{
+  position: fixed;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color: #0a0a0a;
+}
+.logo {
+  display: block;
+  margin: .3rem;
+  padding: .3rem;
+  text-align: center;
+  justify-content: left;
+  font-size: 1rem;
+  color: #0094EE;
+  font-family: sans-serif;
+  width: 10%;
+}
+ul {
+  display: flex;
+  justify-content: left;
+  width: 90%;
+  padding: .3rem;
+  text-decoration: none;
+}
+li {
+  display: block;
+  padding: .3rem;
+  margin: .3rem;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+Link, Link:hover, Link:visited {
+  color: inherit;
+  text-decoration: none;
+ }
+Link, Link:hover, Link:active {
+  color: greenyellow;
+  text-decoration: none;
+
+}
+#info {
+position: absolute;
+width: 100%;
+text-align: center;
+z-index: 100;
+display:block;
+  color: white;
+  top: 6rem
+}
+.label {
+  color: #FFF;
+  font-family: sans-serif;
+  padding: 2px;
+  background: rgba( 0, 0, 0, .6 );
+}
+
+body {
+margin: 0;
+background-color: #000;
+color: #fff;
+font-family: Monospace;
+font-size: 13px;
+line-height: 24px;
+overscroll-behavior: none;
+}
+
+a {
+color: #ff0;
+text-decoration: none;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+button {
+cursor: pointer;
+text-transform: uppercase;
+}
+
+#info {
+position: absolute;
+top: 0px;
+width: 100%;
+padding: 10px;
+box-sizing: border-box;
+text-align: center;
+-moz-user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
+pointer-events: none;
+z-index: 1; /* TODO Solve this in HTML */
+}
+
+a, button, input, select {
+pointer-events: auto;
+}
+
+.lil-gui {
+z-index: 2 !important; /* TODO Solve this in HTML */
+}
+
+@media all and ( max-width: 640px ) {
+.lil-gui.root { 
+  right: auto;
+  top: auto;
+  max-height: 50%;
+  max-width: 80%;
+  bottom: 0;
+  left: 0;
+}
+}
+
+#overlay {
+position: absolute;
+font-size: 16px;
+z-index: 2;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+background: rgba(0,0,0,0.7);
+}
+
+#overlay button {
+  background: transparent;
+  border: 0;
+  border: 1px solid rgb(255, 255, 255);
+  border-radius: 4px;
+  color: #ffffff;
+  padding: 12px 18px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#notSupported {
+width: 50%;
+margin: auto;
+background-color: #f00;
+margin-top: 20px;
+padding: 10px;
+}
