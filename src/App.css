@@ -1,7 +1,4 @@
-body {
-  margin: 0px;
-  height: 100vh;
-}
+
 canvas {
   display: block;
 }
@@ -17,7 +14,7 @@ nav {
   align-items: center;
   padding: 0 20px;
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: 100;
 }
 #scene-container{
   position: fixed;
@@ -58,16 +55,18 @@ li {
 position: absolute;
 width: 100%;
 text-align: center;
-z-index: 100;
 display:block;
-  color: white;
-  top: 6rem
+color: white;
+top: 20rem;
+font-size: 1.5rem;
+z-index: 1000;
 }
 .label {
   color: #FFF;
   font-family: sans-serif;
   padding: 2px;
   background: rgba( 0, 0, 0, .6 );
+  z-index: 1000;
 }
 
 body {
