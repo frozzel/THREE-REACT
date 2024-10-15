@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
+import WebGL from 'three/addons/capabilities/WebGL.js';
+
 
 export default function Home() {
   const mountRef = useRef(null);
@@ -98,8 +100,8 @@ export default function Home() {
     controls.dynamicDampingFactor = 0.15;
 
     // Axes Helper
-    const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
+    // const axesHelper = new THREE.AxesHelper(5);
+    // scene.add(axesHelper);
 
     // Trigonometry Constants for Orbital Paths
     let theta = 0;
@@ -131,8 +133,18 @@ export default function Home() {
 
       renderer.render(scene, camera);
     };
+    if ( WebGL.isWebGL2Available() ) {
 
-    rendering();
+      // Initiate function or other initializations here
+      rendering();
+    
+    } else {
+    
+      const warning = WebGL.getWebGL2ErrorMessage();
+      document.getElementById( 'container' ).appendChild( warning );
+    
+    }
+   
 
     // Cleanup function
     return () => {
@@ -163,7 +175,7 @@ export default function Home() {
         scene.remove(helper);
       });
 
-      axesHelper.geometry.dispose();
+      // axesHelper.geometry.dispose();
       
       renderer.dispose();
     };

@@ -1,376 +1,183 @@
 import * as THREE from 'three';
-import { FontLoader } from 'three/examples/jsm/Addons.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import earthImage from '../assets/textures/earth_atmos_2048.jpg';
+import earthSpec from '../assets/textures/earth_specular_2048.jpg';
+import earthNormal from '../assets/textures/earth_normal_2048.jpg';
+import moonImage from '../assets/textures/moon_1024.jpg';
+import stars from '../assets/textures/sky2.jpg';
 
 
 export default function Text() {
-    THREE.Cache.enabled = true;
 
-let container;
+  let camera, scene, renderer, labelRenderer;
 
-let camera, cameraTarget, scene, renderer;
+  const layers = {
 
-let group, textMesh1, textMesh2, textGeo, materials;
+    'Toggle Name': function () {
 
-let firstLetter = true;
-
-let text = 'three.js',
-
-  bevelEnabled = true,
-
-  font = undefined,
-
-  fontName = 'optimer', // helvetiker, optimer, gentilis, droid sans, droid serif
-  fontWeight = 'bold'; // normal bold
-
-const depth = 20,
-  size = 70,
-  hover = 30,
-
-  curveSegments = 4,
-
-  bevelThickness = 2,
-  bevelSize = 1.5;
-
-const mirror = true;
-
-const fontMap = {
-
-  'helvetiker': 0,
-  'optimer': 1,
-  'gentilis': 2,
-  'droid/droid_sans': 3,
-  'droid/droid_serif': 4
-
-};
-
-const weightMap = {
-
-  'regular': 0,
-  'bold': 1
-
-};
-
-const reverseFontMap = [];
-const reverseWeightMap = [];
-
-for ( const i in fontMap ) reverseFontMap[ fontMap[ i ] ] = i;
-for ( const i in weightMap ) reverseWeightMap[ weightMap[ i ] ] = i;
-
-let targetRotation = 0;
-let targetRotationOnPointerDown = 0;
-
-let pointerX = 0;
-let pointerXOnPointerDown = 0;
-
-let windowHalfX = window.innerWidth / 2;
-
-let fontIndex = 1;
-
-init();
-
-function init() {
-
-  container = document.createElement( 'div' );
-  document.body.appendChild( container );
-
-  // CAMERA
-
-  camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 1500 );
-  camera.position.set( 0, 400, 700 );
-
-  cameraTarget = new THREE.Vector3( 0, 150, 0 );
-
-  // SCENE
-
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color( 0x1F1F1F );
-  scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
-
-  // LIGHTS
-
-  const dirLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
-  dirLight.position.set( 0, 0, 1 ).normalize();
-  scene.add( dirLight );
-
-  const pointLight = new THREE.PointLight( 0xffffff, 4.5, 0, 0 );
-  pointLight.color.setHSL( Math.random(), 1, 0.5 );
-  pointLight.position.set( 0, 100, 90 );
-  scene.add( pointLight );
-
-  materials = [
-    new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // front
-    new THREE.MeshPhongMaterial( { color: 0xffffff } ) // side
-  ];
-
-  group = new THREE.Group();
-  group.position.y = 100;
-
-  scene.add( group );
-
-  loadFont();
-
-  const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry( 10000, 10000 ),
-    new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.5, transparent: true } )
-  );
-  plane.position.y = 100;
-  plane.rotation.x = - Math.PI / 2;
-  scene.add( plane );
-
-  // RENDERER
-
-  renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  renderer.setAnimationLoop( animate );
-  container.appendChild( renderer.domElement );
-
-  // EVENTS
-
-  container.style.touchAction = 'none';
-  container.addEventListener( 'pointerdown', onPointerDown );
-
-  document.addEventListener( 'keypress', onDocumentKeyPress );
-  document.addEventListener( 'keydown', onDocumentKeyDown );
-
-  //
-
-  const params = {
-    changeColor: function () {
-
-      pointLight.color.setHSL( Math.random(), 1, 0.5 );
+      camera.layers.toggle( 0 );
 
     },
-    changeFont: function () {
+    'Toggle Mass': function () {
 
-      fontIndex ++;
-
-      fontName = reverseFontMap[ fontIndex % reverseFontMap.length ];
-
-      loadFont();
+      camera.layers.toggle( 1 );
 
     },
-    changeWeight: function () {
+    'Enable All': function () {
 
-      if ( fontWeight === 'bold' ) {
-
-        fontWeight = 'regular';
-
-      } else {
-
-        fontWeight = 'bold';
-
-      }
-
-      loadFont();
+      camera.layers.enableAll();
 
     },
-    changeBevel: function () {
 
-      bevelEnabled = ! bevelEnabled;
+    'Disable All': function () {
 
-      refreshText();
+      camera.layers.disableAll();
 
     }
+
   };
 
-  //
+  const clock = new THREE.Clock();
+  const textureLoader = new THREE.TextureLoader();
 
-  const gui = new GUI();
+  let moon;
 
-  gui.add( params, 'changeColor' ).name( 'change color' );
-  gui.add( params, 'changeFont' ).name( 'change font' );
-  gui.add( params, 'changeWeight' ).name( 'change weight' );
-  gui.add( params, 'changeBevel' ).name( 'change bevel' );
-  gui.open();
+  init();
+  animate();
 
-  //
+  function init() {
 
-  window.addEventListener( 'resize', onWindowResize );
+    const EARTH_RADIUS = 1;
+    const MOON_RADIUS = 0.27;
 
-}
+    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 100 );
+    camera.position.set( 10, 5, 20 );
 
-function onWindowResize() {
+    camera.layers.enableAll();
 
-  windowHalfX = window.innerWidth / 2;
+    scene = new THREE.Scene();
 
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+    const dirLight = new THREE.DirectionalLight( 0xffffff, 6 );
+    dirLight.position.set( 0, 0, 1 );
+    dirLight.layers.enableAll();
+    scene.add( dirLight );
+    scene.background = new THREE.TextureLoader().load( stars );
 
-  renderer.setSize( window.innerWidth, window.innerHeight );
+    // const axesHelper = new THREE.AxesHelper( 5 );
+    // axesHelper.layers.enableAll();
+    // scene.add( axesHelper );
 
-}
+    //
+    
 
-//
+    const earthGeometry = new THREE.SphereGeometry( EARTH_RADIUS, 16, 16 );
+    // const earthMaterial = new THREE.MeshBasicMaterial({color:  0x0094EE });
+    const earthMaterial = new THREE.MeshPhongMaterial( {
+      specular: 0x333333,
+      shininess: 5,
+      map: new THREE.TextureLoader().load( earthImage ),
+      specularMap: new THREE.TextureLoader().load( earthSpec ),
+      normalMap: new THREE.TextureLoader().load( earthNormal ),
+      normalScale: new THREE.Vector2( 0.85, 0.85 )
+    } );
+    earthMaterial.map.colorSpace = THREE.SRGBColorSpace;
+    const earth = new THREE.Mesh( earthGeometry, earthMaterial );
+    scene.add( earth );
 
-function onDocumentKeyDown( event ) {
+    const moonGeometry = new THREE.SphereGeometry( MOON_RADIUS, 16, 16 );
+    const moonMaterial = new THREE.MeshPhongMaterial( {
+      shininess: 1,
+      map: textureLoader.load( moonImage )
+    } );
+    moonMaterial.map.colorSpace = THREE.SRGBColorSpace;
+    moon = new THREE.Mesh( moonGeometry, moonMaterial );
+    scene.add( moon );
 
-  if ( firstLetter ) {
+    //
 
-    firstLetter = false;
-    text = '';
+    earth.layers.enableAll();
+    moon.layers.enableAll();
 
-  }
+    const earthDiv = document.createElement( 'div' );
+    earthDiv.className = 'label';
+    earthDiv.textContent = 'Earth';
+    earthDiv.style.backgroundColor = 'transparent';
 
-  const keyCode = event.keyCode;
+    const earthLabel = new CSS2DObject( earthDiv );
+    earthLabel.position.set( 1.5 * EARTH_RADIUS, 0, 0 );
+    earthLabel.center.set( 0, 1 );
+    earth.add( earthLabel );
+    earthLabel.layers.set( 0 );
 
-  // backspace
 
-  if ( keyCode == 8 ) {
+    const moonDiv = document.createElement( 'div' );
+    moonDiv.className = 'label';
+    moonDiv.textContent = 'Moon';
+    moonDiv.style.backgroundColor = 'transparent';
 
-    event.preventDefault();
+    const moonLabel = new CSS2DObject( moonDiv );
+    moonLabel.position.set( 1.5 * MOON_RADIUS, 0, 0 );
+    moonLabel.center.set( 0, 1 );
+    moon.add( moonLabel );
+    moonLabel.layers.set( 0 );
 
-    text = text.substring( 0, text.length - 1 );
-    refreshText();
 
-    return false;
+    //
 
-  }
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor( "#1F1F1F" );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
 
-}
+    labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize( window.innerWidth, window.innerHeight );
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    document.body.appendChild( labelRenderer.domElement );
 
-function onDocumentKeyPress( event ) {
+    const controls = new OrbitControls( camera, labelRenderer.domElement );
+    controls.minDistance = 5;
+    controls.maxDistance = 100;
 
-  const keyCode = event.which;
+    //
 
-  // backspace
+    window.addEventListener( 'resize', onWindowResize );
 
-  if ( keyCode == 8 ) {
-
-    event.preventDefault();
-
-  } else {
-
-    const ch = String.fromCharCode( keyCode );
-    text += ch;
-
-    refreshText();
-
-  }
-
-}
-
-function loadFont() {
-
-  const loader = new FontLoader();
-  loader.load( 'fonts/' + fontName + '_' + fontWeight + '.typeface.json', function ( response ) {
-
-    font = response;
-
-    refreshText();
-
-  } );
-
-}
-
-function createText() {
-
-  textGeo = new TextGeometry( text, {
-
-    font: font,
-
-    size: size,
-    depth: depth,
-    curveSegments: curveSegments,
-
-    bevelThickness: bevelThickness,
-    bevelSize: bevelSize,
-    bevelEnabled: bevelEnabled
-
-  } );
-
-  textGeo.computeBoundingBox();
-
-  const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-  textMesh1 = new THREE.Mesh( textGeo, materials );
-
-  textMesh1.position.x = centerOffset;
-  textMesh1.position.y = hover;
-  textMesh1.position.z = 0;
-
-  textMesh1.rotation.x = 0;
-  textMesh1.rotation.y = Math.PI * 2;
-
-  group.add( textMesh1 );
-
-  if ( mirror ) {
-
-    textMesh2 = new THREE.Mesh( textGeo, materials );
-
-    textMesh2.position.x = centerOffset;
-    textMesh2.position.y = - hover;
-    textMesh2.position.z = depth;
-
-    textMesh2.rotation.x = Math.PI;
-    textMesh2.rotation.y = Math.PI * 2;
-
-    group.add( textMesh2 );
 
   }
 
-}
+  function onWindowResize() {
 
-function refreshText() {
+    camera.aspect = window.innerWidth / window.innerHeight;
 
-  group.remove( textMesh1 );
-  if ( mirror ) group.remove( textMesh2 );
+    camera.updateProjectionMatrix();
 
-  if ( ! text ) return;
+    renderer.setSize( window.innerWidth, window.innerHeight );
 
-  createText();
+    labelRenderer.setSize( window.innerWidth, window.innerHeight );
 
-}
+  }
 
-function onPointerDown( event ) {
 
-  if ( event.isPrimary === false ) return;
+  function animate() {
 
-  pointerXOnPointerDown = event.clientX - windowHalfX;
-  targetRotationOnPointerDown = targetRotation;
+    requestAnimationFrame( animate );
 
-  document.addEventListener( 'pointermove', onPointerMove );
-  document.addEventListener( 'pointerup', onPointerUp );
+    const elapsed = clock.getElapsedTime();
 
-}
+    moon.position.set( Math.sin( elapsed ) * 5, 0, Math.cos( elapsed ) * 5 );
 
-function onPointerMove( event ) {
+    renderer.render( scene, camera );
+    labelRenderer.render( scene, camera );
 
-  if ( event.isPrimary === false ) return;
+  }
 
-  pointerX = event.clientX - windowHalfX;
 
-  targetRotation = targetRotationOnPointerDown + ( pointerX - pointerXOnPointerDown ) * 0.02;
 
-}
-
-function onPointerUp() {
-
-  if ( event.isPrimary === false ) return;
-
-  document.removeEventListener( 'pointermove', onPointerMove );
-  document.removeEventListener( 'pointerup', onPointerUp );
-
-}
-
-//
-
-function animate() {
-
-  group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
-
-  camera.lookAt( cameraTarget );
-
-  renderer.clear();
-  renderer.render( scene, camera );
-
-}
   return (
-	<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - procedural 3D text<br/>
-			type to enter new text, drag to spin the text
-		</div>
+    <div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> css2d - label</div>
+
 )
 }
