@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Cube from './pages/Cube';
 import Lines from './pages/Lines';
 import Text from './pages/Text';
+import TextTexture from './pages/TextTexture.jsx';
 
 function App() {
  
@@ -18,6 +19,7 @@ function App() {
         <Route path="/cube" element={<Cube />} />
         <Route path="/lines" element={<Lines />} />
         <Route path="/text" element={<Text />} />
+        <Route path="/textTexture" element={<TextTexture />} />
       </Routes>
     </>
   )

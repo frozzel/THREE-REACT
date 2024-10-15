@@ -7,6 +7,7 @@ import earthSpec from '../assets/textures/earth_specular_2048.jpg';
 import earthNormal from '../assets/textures/earth_normal_2048.jpg';
 import moonImage from '../assets/textures/moon_1024.jpg';
 import stars from '../assets/textures/sky2.jpg';
+import {TrackballControls} from 'three/addons/controls/TrackballControls.js';
 
 export default function Text() {
 
@@ -15,6 +16,7 @@ export default function Text() {
     const clock = new THREE.Clock();
     const textureLoader = new THREE.TextureLoader();
     let moon;
+    let earth;
 
     const init = () => {
       const EARTH_RADIUS = 1;
@@ -42,7 +44,7 @@ export default function Text() {
         normalScale: new THREE.Vector2(0.85, 0.85),
       });
       earthMaterial.map.colorSpace = THREE.SRGBColorSpace;
-      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+      earth = new THREE.Mesh(earthGeometry, earthMaterial);
       scene.add(earth);
 
       const moonGeometry = new THREE.SphereGeometry(MOON_RADIUS, 16, 16);
@@ -64,13 +66,14 @@ export default function Text() {
       const earthLabel = new CSS2DObject(earthDiv);
       earthLabel.position.set(1.5 * EARTH_RADIUS, 0, 0);
       earthLabel.center.set(0, 1);
-      earth.add(earthLabel);
+      scene.add(earthLabel);
       earthLabel.layers.set(0);
 
       const moonDiv = document.createElement('div');
       moonDiv.className = 'label';
       moonDiv.textContent = 'Moon';
       moonDiv.style.backgroundColor = 'transparent';
+
       const moonLabel = new CSS2DObject(moonDiv);
       moonLabel.position.set(1.5 * MOON_RADIUS, 0, 0);
       moonLabel.center.set(0, 1);
@@ -93,6 +96,10 @@ export default function Text() {
       controls.minDistance = 5;
       controls.maxDistance = 100;
 
+      const viewControls = new TrackballControls(camera, labelRenderer.domElement);
+      viewControls.rotateSpeed = 4;
+      viewControls.dynamicDampingFactor = 0.15;
+
       window.addEventListener('resize', onWindowResize);
     };
 
@@ -106,6 +113,8 @@ export default function Text() {
     const animate = () => {
       const animateId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
+      earth.rotation.y += 0.01;
+      moon.rotation.y += 0.01;
       moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
       renderer.render(scene, camera);
       labelRenderer.render(scene, camera);

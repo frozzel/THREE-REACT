@@ -11,6 +11,7 @@ export default function navbar() {
         <li><Link to="/cube" style={{ textDecoration: 'none' }}>Cube</Link></li>
         <li><Link to="/lines" style={{ textDecoration: 'none' }}>Lines</Link></li>
         <li><Link to="/text" style={{ textDecoration: 'none' }}>Text</Link></li>
+        <li><Link to="/textTexture" style={{ textDecoration: 'none' }}>Texture</Link></li>
     </ul>
    
 </nav>
