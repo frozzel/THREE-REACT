@@ -34,6 +34,8 @@ This project showcases a 3D scene using Three.js, where a cube spins slowly in t
 - **JavaScript**: Core scripting language
 - **HTML5**: Structure for the webpage
 - **CSS3**: Styling for the webpage
+- **VITE**: Package manager for React Build
+- **REACT** Client Side Dom Render
 
 ## Installation
 
@@ -42,8 +44,8 @@ To set up the project locally, follow these steps:
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/yourusername/threejs-project.git
-cd threejs-project
+git clone https://github.com/frozzel/THREE-REACT.git
+cd THREE-REACT
 ```
 
 2. **Install dependencies:**
@@ -62,9 +64,12 @@ yarn add three
 
 ## Usage
 
-1. Open `index.html` in a web browser to view the animation.
-2. Use your mouse to click and drag, allowing you to spin the cube and spheres in any direction.
-3. Use `npm start` in terminal to load live server
+1. Use `npm run dev` in terminal to load live server 
+2. Open `http://localhost:5173/` in a web browser to view the animation. 
+3. Use your mouse to click and drag, allowing you to spin the cube and spheres in any direction.
+
+> [!TIP] 
+> [Three.js Docs](https://threejs.org/docs/index.html#manual/en/introduction/Installation)
 
 ## Features
 
