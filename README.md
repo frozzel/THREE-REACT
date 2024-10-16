@@ -1,5 +1,5 @@
 <div>
-<a href=""><img src="https://github.com/frozzel/INIT-THREE-JS/blob/1e965cbcd333bb354aa367da8412b6b46c589332/assets/Screen%20Recording%202024-10-09%20at%202.45.30%E2%80%AFPM.gif" align="center" height="" width="100%" ></a></div>
+<a href=""><img src="https://github.com/frozzel/THREE-REACT/blob/502a117d58117baf38625c653e6b177775ff13d2/src/assets/screen-shots/screen1.gif" align="center" height="" width="100%" ></a></div>
 
 
 
@@ -10,12 +10,19 @@ Welcome to the Three.js project, where we explore creating a 3D animation featur
 ## Table of Contents
 
 1. [Description](#description)
-2. [Technologies Used](#technologies-used)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Features](#features)
-6. [Contributing](#contributing)
-7. [License](#license)
+2. [Screen Shots](#screen-shots)
+3. [Technologies Used](#technologies-used)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Features](#features)
+7. [Contributing](#contributing)
+8. [License](#license)
+
+
+## Screen Shots
+
+![Cube](https://github.com/frozzel/THREE-REACT/blob/502a117d58117baf38625c653e6b177775ff13d2/src/assets/screen-shots/screen2.gif)
+![Dynamic Text](https://github.com/frozzel/THREE-REACT/blob/502a117d58117baf38625c653e6b177775ff13d2/src/assets/screen-shots/screen3.gif)
 
 ## Description
 
