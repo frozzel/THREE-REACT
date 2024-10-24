@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import moonImage from '../assets/textures/moon_1024.jpg';
@@ -7,11 +7,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export default function Models() {
   const mountRef = useRef(null);
+  const rocketRef = useRef(null); // Reference for the rocket object
+  const animationStart = useRef(false); // Track if the rocket animation should start
+  let rocketStartTime = useRef(null); // Track the start time of the animation
 
   useEffect(() => {
     let scene, renderer, camera, controls;
-    let model;
-    let rocketStartTime = Date.now();
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
     // Set up the scene, camera, and renderer
     scene = new THREE.Scene();
@@ -40,7 +43,10 @@ export default function Models() {
 
     /// sphere background
     const sphereGeo = new THREE.SphereGeometry(50, 50, 50);
-    const sphereMat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(skyImage), side: THREE.DoubleSide });
+    const sphereMat = new THREE.MeshBasicMaterial({
+      map: new THREE.TextureLoader().load(skyImage),
+      side: THREE.DoubleSide,
+    });
     const sphere = new THREE.Mesh(sphereGeo, sphereMat);
     scene.add(sphere);
 
@@ -52,7 +58,10 @@ export default function Models() {
 
     /// add ground plain
     const geometry = new THREE.PlaneGeometry(100, 100);
-    const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.DoubleSide,
+    });
     const plane = new THREE.Mesh(geometry, material);
     scene.add(plane);
 
@@ -62,41 +71,64 @@ export default function Models() {
     // Use GLTFLoader to load the GLB model
     const loader = new GLTFLoader();
     loader.load('./3D-models/rocket.glb', (gltf) => {
-      model = gltf.scene;
-      scene.add(model);
-      
-    //   model.scale.set(0.1, 0.1, 0.1);
-    //   model.position.set(0, -1, 0);
-      model.castShadow = true;
-      model.receiveShadow = true;
+      rocketRef.current = gltf.scene;
+      scene.add(rocketRef.current);
+
+      rocketRef.current.castShadow = true;
+      rocketRef.current.receiveShadow = true;
+
+      console.log('Rocket model loaded');
     });
 
+    const onMouseClick = (event) => {
+      // Ensure rocket model is loaded before attempting click detection
+      if (!rocketRef.current) return;
+
+      event.preventDefault();
+
+      // Calculate normalized device coordinates (NDC)
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(rocketRef.current, true);
+
+      if (intersects.length > 0) {
+        console.log('Rocket clicked');
+        animationStart.current = true; // Flag to start animation
+        rocketStartTime.current = Date.now(); // Record the start time of the animation
+      }
+    };
+
+    // Add mouse click event listener
+    window.addEventListener('click', onMouseClick);
 
     // Animation loop
     const animate = () => {
       controls.update();
-      
-      if (model) {
-        const elapsed = (Date.now() - rocketStartTime) / 1000;
-        
-        // Move the rocket straight up for 15 seconds
-        if (elapsed <= 7) {
-          model.position.y += 0.05;
-          model.position.x += -0.01;
-          model.position.z += -0.01;
-          model.rotation.y += -0.05;
-          model.rotation.x = -0.02;
 
-        } else {
+      if (animationStart.current) {
+        const elapsed = (Date.now() - rocketStartTime.current) / 1000;
+
+        if (elapsed <= 7 && rocketRef.current) {
+          // Move the rocket straight up
+          rocketRef.current.position.y += 0.05;
+          rocketRef.current.position.x += -0.01;
+          rocketRef.current.position.z += -0.01;
+          rocketRef.current.rotation.y += -0.05;
+          rocketRef.current.rotation.x = -0.02;
+        } else if (elapsed > 7 && rocketRef.current) {
           // Reset the rocket's position
-          model.position.y = .0;
-          model.position.x = .0;
-          model.position.z = .0;
-          rocketStartTime = Date.now();
+          rocketRef.current.position.y = 0.0;
+          rocketRef.current.position.x = 0.0;
+          rocketRef.current.position.z = 0.0;
+          animationStart.current = false; // Stop the animation
         }
       }
+
       sphere.rotation.y += 0.001;
       sphere.rotation.x += 0.001;
+
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     };
@@ -105,7 +137,7 @@ export default function Models() {
 
     // Handle cleanup on unmount
     return () => {
-      mountRef.current.removeChild(renderer.domElement);
+      window.removeEventListener('click', onMouseClick);
       renderer.dispose();
     };
   }, []);
