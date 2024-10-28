@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import moonImage from '../assets/textures/moon_1024.jpg';
 import skyImage from '../assets/textures/sky2.jpg';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
 export default function Models() {
   const mountRef = useRef(null);
@@ -12,7 +12,7 @@ export default function Models() {
   let rocketStartTime = useRef(null); // Track the start time of the animation
 
   useEffect(() => {
-    let scene, renderer, camera, controls;
+    let scene, renderer, camera, controls, rocket;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -29,7 +29,7 @@ export default function Models() {
     mountRef.current.appendChild(renderer.domElement);
 
     // Trackball Controls for Camera
-    controls = new OrbitControls(camera, renderer.domElement);
+    controls = new TrackballControls(camera, renderer.domElement);
     controls.rotateSpeed = 4;
     controls.dynamicDampingFactor = 0.15;
 
@@ -72,13 +72,15 @@ export default function Models() {
     const loader = new GLTFLoader();
     loader.load('./3D-models/rocket.glb', (gltf) => {
       rocketRef.current = gltf.scene;
+      rocket = gltf.scene;
       scene.add(rocketRef.current);
+      scene.add(rocket)
 
       rocketRef.current.castShadow = true;
       rocketRef.current.receiveShadow = true;
 
-      console.log('Rocket model loaded');
     });
+    
 
     const onMouseClick = (event) => {
       // Ensure rocket model is loaded before attempting click detection
@@ -93,8 +95,7 @@ export default function Models() {
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObject(rocketRef.current, true);
 
-      if (intersects.length > 0) {
-        console.log('Rocket clicked');
+      if (intersects.length > 1) {
         animationStart.current = true; // Flag to start animation
         rocketStartTime.current = Date.now(); // Record the start time of the animation
       }
@@ -106,25 +107,32 @@ export default function Models() {
     // Animation loop
     const animate = () => {
       controls.update();
-
       if (animationStart.current) {
         const elapsed = (Date.now() - rocketStartTime.current) / 1000;
-
-        if (elapsed <= 7 && rocketRef.current) {
+        if (elapsed <= 2 && rocketRef.current) {
           // Move the rocket straight up
-          rocketRef.current.position.y += 0.05;
+          rocketRef.current.position.y += 0.03;
+          rocket.position.y = rocketRef.current.position.y;
           rocketRef.current.position.x += -0.01;
+          rocket.position.x = rocketRef.current.position.x;
           rocketRef.current.position.z += -0.01;
-          rocketRef.current.rotation.y += -0.05;
+          rocket.position.z = rocketRef.current.position.z;
+          rocketRef.current.rotation.y += -0.02;
+          rocket.rotation.y = rocketRef.current.rotation.y;
           rocketRef.current.rotation.x = -0.02;
-        } else if (elapsed > 7 && rocketRef.current) {
+          rocket.rotation.x = rocketRef.current.rotation.x;
+        } else if (elapsed > 1.9 && rocketRef.current) {
           // Reset the rocket's position
           rocketRef.current.position.y = 0.0;
           rocketRef.current.position.x = 0.0;
           rocketRef.current.position.z = 0.0;
+          rocket.position.y = rocketRef.current.position.y;
+          rocket.position.x = rocketRef.current.position.x;
+          rocket.position.z = rocketRef.current.position.z;
           animationStart.current = false; // Stop the animation
         }
       }
+
 
       sphere.rotation.y += 0.001;
       sphere.rotation.x += 0.001;
@@ -134,10 +142,10 @@ export default function Models() {
     };
 
     animate();
-
+    
     // Handle cleanup on unmount
     return () => {
-      window.removeEventListener('click', onMouseClick);
+      // window.removeEventListener('click', onMouseClick);
       renderer.dispose();
     };
   }, []);
