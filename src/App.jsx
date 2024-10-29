@@ -6,10 +6,11 @@ import Cube from './pages/Cube';
 import Lines from './pages/Lines';
 import Text from './pages/Text';
 import TextTexture from './pages/TextTexture.jsx';
-import  Models  from './pages/Models';  
-function App() {
- 
+import  Models  from './pages/Models'; 
+import Control from './pages/Control.jsx';
 
+
+function App() {
 
   return (
     <>
@@ -21,6 +22,7 @@ function App() {
         <Route path="/text" element={<Text />} />
         <Route path="/textTexture" element={<TextTexture />} />
         <Route path="/models" element={<Models />} />
+        <Route path="/control" element={<Control />} />
       </Routes>
     </>
   )
