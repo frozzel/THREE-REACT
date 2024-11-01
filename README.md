@@ -22,8 +22,18 @@ Welcome to the Three.js project, where we explore creating a 3D animation featur
 ## Screen Shots
 
 ![Cube](https://github.com/frozzel/THREE-REACT/blob/502a117d58117baf38625c653e6b177775ff13d2/src/assets/screen-shots/screen2.gif)
+
+---
+
 ![Dynamic Text](https://github.com/frozzel/THREE-REACT/blob/502a117d58117baf38625c653e6b177775ff13d2/src/assets/screen-shots/screen3.gif)
+
+---
+
 <img src="https://github.com/frozzel/THREE-REACT/blob/61bfda0a5929a9a93a6da8067e87d26b5f2a58b6/src/assets/screen-shots/screen5.gif" align="center" height="" width="100%" >
+
+---
+
+![First Person Controls](https://github.com/frozzel/THREE-REACT/blob/54264187a5fb1241a29d04822848f52624f67859/src/assets/screen-shots/screen6.gif)
 
 
 ## Description
