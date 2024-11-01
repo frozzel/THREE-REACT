@@ -33,7 +33,8 @@ Welcome to the Three.js project, where we explore creating a 3D animation featur
 
 ---
 
-![First Person Controls](https://github.com/frozzel/THREE-REACT/blob/54264187a5fb1241a29d04822848f52624f67859/src/assets/screen-shots/screen6.gif)
+<img src="https://github.com/frozzel/THREE-REACT/blob/54264187a5fb1241a29d04822848f52624f67859/src/assets/screen-shots/screen6.gif" align="center" height="" width="100%" >
+
 
 
 ## Description
