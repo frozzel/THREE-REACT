@@ -116,4 +116,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Thank you for visiting this project! If you have any questions or need further assistance, please feel free to reach out. Enjoy exploring and modifying the 3D animation with Three.js!
+Thank you for visiting this project! If you have any questions or need further assistance, please feel free to reach out. Enjoy exploring and modifying the 3D animation with Three.js!  
+
+🎉🎉
